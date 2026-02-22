@@ -1,7 +1,7 @@
 import bcrypt from 'bcrypt'
-import { drizzle } from 'drizzle-orm/postgres-js'
-import postgres from 'postgres'
-import { admins } from '../db/schema/admins'
+import { PrismaClient } from '@prisma/client'
+
+const prisma = new PrismaClient()
 
 const args = process.argv.slice(2)
 
@@ -24,23 +24,22 @@ async function main() {
     process.exit(1)
   }
 
-  const connectionString = process.env.DATABASE_URL || 'postgres://postgres:postgres@localhost:5432/saas'
-  const client = postgres(connectionString)
-  const db = drizzle(client)
-
   try {
     const passwordHash = await bcrypt.hash(password, 10)
 
-    const [admin] = await db.insert(admins).values({
-      email,
-      name,
-      passwordHash,
-      isSuperuser,
-    }).returning({
-      id: admins.id,
-      email: admins.email,
-      name: admins.name,
-      isSuperuser: admins.isSuperuser,
+    const admin = await prisma.admin.create({
+      data: {
+        email,
+        name,
+        passwordHash,
+        isSuperuser,
+      },
+      select: {
+        id: true,
+        email: true,
+        name: true,
+        isSuperuser: true,
+      },
     })
 
     console.log('Admin created successfully:')
@@ -49,14 +48,14 @@ async function main() {
     console.log(`  Name: ${admin.name}`)
     console.log(`  Superuser: ${admin.isSuperuser}`)
   } catch (error: any) {
-    if (error.code === '23505') {
+    if (error.code === 'P2002') {
       console.error(`Error: Admin with email "${email}" already exists`)
     } else {
       console.error('Error creating admin:', error.message)
     }
     process.exit(1)
   } finally {
-    await client.end()
+    await prisma.$disconnect()
   }
 }
 

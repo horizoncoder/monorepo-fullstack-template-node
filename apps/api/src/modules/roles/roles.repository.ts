@@ -1,84 +1,94 @@
-import { eq, inArray } from 'drizzle-orm'
-import { db } from '../../db'
-import { roles, rolePermissions, permissions } from '../../db/schema/permissions'
+import { prisma } from '../../db'
 
 export const rolesRepository = {
   async findAll() {
-    const allRoles = await db.select().from(roles)
-    const allRolePerms = await db
-      .select({
-        roleId: rolePermissions.roleId,
-        permissionKey: permissions.key,
-      })
-      .from(rolePermissions)
-      .innerJoin(permissions, eq(rolePermissions.permissionId, permissions.id))
+    const allRoles = await prisma.role.findMany({
+      include: {
+        rolePermissions: {
+          include: { permission: true },
+        },
+      },
+    })
 
     return allRoles.map((role) => ({
-      ...role,
-      permissions: allRolePerms.filter((rp) => rp.roleId === role.id).map((rp) => rp.permissionKey),
+      id: role.id,
+      name: role.name,
+      description: role.description,
+      createdAt: role.createdAt,
+      updatedAt: role.updatedAt,
+      permissions: role.rolePermissions.map((rp) => rp.permission.key),
     }))
   },
 
   async findById(id: string) {
-    const [role] = await db.select().from(roles).where(eq(roles.id, id))
+    const role = await prisma.role.findUnique({
+      where: { id },
+      include: {
+        rolePermissions: {
+          include: { permission: true },
+        },
+      },
+    })
     if (!role) return null
 
-    const perms = await db
-      .select({ key: permissions.key })
-      .from(rolePermissions)
-      .innerJoin(permissions, eq(rolePermissions.permissionId, permissions.id))
-      .where(eq(rolePermissions.roleId, id))
-
-    return { ...role, permissions: perms.map((p) => p.key) }
+    return {
+      id: role.id,
+      name: role.name,
+      description: role.description,
+      createdAt: role.createdAt,
+      updatedAt: role.updatedAt,
+      permissions: role.rolePermissions.map((rp) => rp.permission.key),
+    }
   },
 
   async findByName(name: string) {
-    const [role] = await db.select().from(roles).where(eq(roles.name, name))
-    return role ?? null
+    return prisma.role.findUnique({ where: { name } })
   },
 
   async create(data: { name: string; description?: string }) {
-    const [role] = await db.insert(roles).values({
-      name: data.name,
-      description: data.description ?? null,
-    }).returning()
-    return role
+    return prisma.role.create({
+      data: {
+        name: data.name,
+        description: data.description ?? null,
+      },
+    })
   },
 
   async update(id: string, data: Partial<{ name: string; description: string }>) {
-    const [role] = await db.update(roles)
-      .set({ ...data, updatedAt: new Date() })
-      .where(eq(roles.id, id))
-      .returning()
-    return role ?? null
+    try {
+      return await prisma.role.update({ where: { id }, data })
+    } catch {
+      return null
+    }
   },
 
   async delete(id: string) {
-    const [deleted] = await db.delete(roles).where(eq(roles.id, id)).returning({ id: roles.id })
-    return !!deleted
+    try {
+      await prisma.role.delete({ where: { id } })
+      return true
+    } catch {
+      return false
+    }
   },
 
   async setPermissions(roleId: string, permissionKeys: string[]) {
-    // Remove existing
-    await db.delete(rolePermissions).where(eq(rolePermissions.roleId, roleId))
+    await prisma.rolePermission.deleteMany({ where: { roleId } })
 
     if (permissionKeys.length === 0) return
 
-    // Find permission IDs by keys
-    const perms = await db
-      .select({ id: permissions.id })
-      .from(permissions)
-      .where(inArray(permissions.key, permissionKeys))
+    const perms = await prisma.permission.findMany({
+      where: { key: { in: permissionKeys } },
+      select: { id: true },
+    })
 
     if (perms.length > 0) {
-      await db.insert(rolePermissions).values(
-        perms.map((p) => ({ roleId, permissionId: p.id })),
-      )
+      await prisma.rolePermission.createMany({
+        data: perms.map((p) => ({ roleId, permissionId: p.id })),
+      })
     }
   },
 
   async count() {
-    const result = await db.select({ id: roles.id }).from(roles)
-    return result.length
+    return prisma.role.count()
   },
 }

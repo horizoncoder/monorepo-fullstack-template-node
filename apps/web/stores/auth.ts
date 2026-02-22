@@ -14,6 +14,16 @@ export const useAuthStore = defineStore('auth', () => {
 
   const isAuthenticated = computed(() => !!user.value)
 
+  async function register(name: string, email: string, password: string) {
+    const res = await $fetch<{ data: User }>(`${baseUrl}/api/client/auth/register`, {
+      method: 'POST',
+      body: { name, email, password },
+      credentials: 'include',
+    })
+    user.value = res.data
+    return res.data
+  }
+
   async function login(email: string, password: string) {
     const res = await $fetch<{ data: User }>(`${baseUrl}/api/client/auth/login`, {
       method: 'POST',
@@ -48,5 +58,5 @@ export const useAuthStore = defineStore('auth', () => {
     }
   }
 
-  return { user, isLoading, isAuthenticated, login, logout, fetchMe }
+  return { user, isLoading, isAuthenticated, register, login, logout, fetchMe }
 })

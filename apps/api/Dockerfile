@@ -1,4 +1,5 @@
 FROM node:22-alpine AS base
+RUN apk add --no-cache openssl
 RUN corepack enable && corepack prepare pnpm@9.15.0 --activate
 
 WORKDIR /app
@@ -16,6 +17,9 @@ COPY packages/shared ./packages/shared
 COPY apps/api ./apps/api
 
 WORKDIR /app/apps/api
+
+# Generate Prisma client
+RUN npx prisma generate
 
 EXPOSE 3001
 

@@ -1,9 +1,8 @@
 import { Hono } from 'hono'
-import { db } from '../../db'
-import { permissions } from '../../db/schema/permissions'
+import { prisma } from '../../db'
 
 export const adminPermissionsRoutes = new Hono()
   .get('/', async (c) => {
-    const allPermissions = await db.select().from(permissions)
+    const allPermissions = await prisma.permission.findMany()
     return c.json({ data: allPermissions })
   })

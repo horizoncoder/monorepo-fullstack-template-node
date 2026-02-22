@@ -8,10 +8,10 @@
     "build": "tsc",
     "start": "node dist/index.js",
     "typecheck": "tsc --noEmit",
-    "db:generate": "drizzle-kit generate",
-    "db:migrate": "drizzle-kit migrate",
-    "db:push": "drizzle-kit push",
-    "db:studio": "drizzle-kit studio",
+    "db:generate": "prisma generate",
+    "db:migrate": "prisma migrate dev",
+    "db:push": "prisma db push",
+    "db:studio": "prisma studio",
     "create-admin": "tsx src/scripts/create-admin.ts",
     "db:seed-permissions": "tsx src/db/seed-permissions.ts",
     "db:seed": "tsx src/scripts/seed.ts"
@@ -21,16 +21,15 @@
     "@hono/swagger-ui": "^0.5.0",
     "@hono/zod-openapi": "^0.18.0",
     "@hono/zod-validator": "^0.4.0",
+    "@prisma/client": "^5.22.0",
     "@repo/shared": "workspace:*",
     "bcrypt": "^5.1.0",
-    "drizzle-orm": "^0.38.0",
     "hono": "^4.6.0",
-    "postgres": "^3.4.0",
     "zod": "^3.24.0"
   },
   "devDependencies": {
     "@types/bcrypt": "^5.0.0",
-    "drizzle-kit": "^0.30.0",
+    "prisma": "^5.22.0",
     "tsx": "^4.19.0",
     "typescript": "^5.7.0"
   }

@@ -1,10 +1,7 @@
 import bcrypt from 'bcrypt'
-import { drizzle } from 'drizzle-orm/postgres-js'
-import postgres from 'postgres'
-import { eq, sql } from 'drizzle-orm'
-import { admins } from '../db/schema/admins'
-import { users } from '../db/schema/users'
-import { permissions, roles, rolePermissions, adminRoles } from '../db/schema/permissions'
+import { PrismaClient } from '@prisma/client'
+
+const prisma = new PrismaClient()
 
 const PERMISSIONS_DATA = [
   { key: 'users.read', name: 'View Users', description: 'View user list and details', group: 'Users' },
@@ -19,16 +16,13 @@ const PERMISSIONS_DATA = [
 ]
 
 async function main() {
-  const connectionString = process.env.DATABASE_URL || 'postgres://postgres:postgres@localhost:5432/saas'
-  const client = postgres(connectionString)
-  const db = drizzle(client)
-
   try {
     console.log('Seeding permissions...')
     for (const perm of PERMISSIONS_DATA) {
-      await db.insert(permissions).values(perm).onConflictDoUpdate({
-        target: permissions.key,
-        set: { name: sql`excluded.name`, description: sql`excluded.description`, group: sql`excluded.group` },
+      await prisma.permission.upsert({
+        where: { key: perm.key },
+        update: { name: perm.name, description: perm.description, group: perm.group },
+        create: perm,
       })
     }
     console.log(`  ${PERMISSIONS_DATA.length} permissions seeded`)
@@ -36,56 +30,66 @@ async function main() {
     // Create roles
     console.log('Seeding roles...')
 
-    const editorRoleData = { name: 'Editor', description: 'Can view and edit users' }
-    await db.insert(roles).values(editorRoleData).onConflictDoNothing()
-    const [editorRole] = await db.select().from(roles).where(eq(roles.name, 'Editor'))
+    const editorRole = await prisma.role.upsert({
+      where: { name: 'Editor' },
+      update: {},
+      create: { name: 'Editor', description: 'Can view and edit users' },
+    })
 
-    const managerRoleData = { name: 'Manager', description: 'Full access to users and admins' }
-    await db.insert(roles).values(managerRoleData).onConflictDoNothing()
-    const [managerRole] = await db.select().from(roles).where(eq(roles.name, 'Manager'))
+    const managerRole = await prisma.role.upsert({
+      where: { name: 'Manager' },
+      update: {},
+      create: { name: 'Manager', description: 'Full access to users and admins' },
+    })
 
-    const viewerRoleData = { name: 'Viewer', description: 'Read-only access' }
-    await db.insert(roles).values(viewerRoleData).onConflictDoNothing()
-    const [viewerRole] = await db.select().from(roles).where(eq(roles.name, 'Viewer'))
+    const viewerRole = await prisma.role.upsert({
+      where: { name: 'Viewer' },
+      update: {},
+      create: { name: 'Viewer', description: 'Read-only access' },
+    })
 
     console.log('  3 roles created')
 
     // Assign permissions to roles
-    const allPerms = await db.select().from(permissions)
+    const allPerms = await prisma.permission.findMany()
     const permMap = new Map(allPerms.map(p => [p.key, p.id]))
 
     // Editor: users.read, users.write, roles.read
-    await db.delete(rolePermissions).where(eq(rolePermissions.roleId, editorRole.id))
-    await db.insert(rolePermissions).values([
-      { roleId: editorRole.id, permissionId: permMap.get('users.read')! },
-      { roleId: editorRole.id, permissionId: permMap.get('users.write')! },
-      { roleId: editorRole.id, permissionId: permMap.get('roles.read')! },
-    ])
+    await prisma.rolePermission.deleteMany({ where: { roleId: editorRole.id } })
+    await prisma.rolePermission.createMany({
+      data: [
+        { roleId: editorRole.id, permissionId: permMap.get('users.read')! },
+        { roleId: editorRole.id, permissionId: permMap.get('users.write')! },
+        { roleId: editorRole.id, permissionId: permMap.get('roles.read')! },
+      ],
+    })
 
     // Manager: all permissions
-    await db.delete(rolePermissions).where(eq(rolePermissions.roleId, managerRole.id))
-    await db.insert(rolePermissions).values(
-      allPerms.map(p => ({ roleId: managerRole.id, permissionId: p.id })),
-    )
+    await prisma.rolePermission.deleteMany({ where: { roleId: managerRole.id } })
+    await prisma.rolePermission.createMany({
+      data: allPerms.map(p => ({ roleId: managerRole.id, permissionId: p.id })),
+    })
 
     // Viewer: *.read only
-    await db.delete(rolePermissions).where(eq(rolePermissions.roleId, viewerRole.id))
-    await db.insert(rolePermissions).values(
-      allPerms.filter(p => p.key.endsWith('.read')).map(p => ({ roleId: viewerRole.id, permissionId: p.id })),
-    )
+    await prisma.rolePermission.deleteMany({ where: { roleId: viewerRole.id } })
+    await prisma.rolePermission.createMany({
+      data: allPerms.filter(p => p.key.endsWith('.read')).map(p => ({ roleId: viewerRole.id, permissionId: p.id })),
+    })
 
     console.log('  Permissions assigned to roles')
 
     // Create superadmin
     console.log('Seeding admin users...')
     const adminPassword = await bcrypt.hash('admin123', 10)
-    const existing = await db.select().from(admins).where(eq(admins.email, 'admin@example.com'))
-    if (existing.length === 0) {
-      await db.insert(admins).values({
-        email: 'admin@example.com',
-        name: 'Super Admin',
-        passwordHash: adminPassword,
-        isSuperuser: true,
+    const existing = await prisma.admin.findUnique({ where: { email: 'admin@example.com' } })
+    if (!existing) {
+      await prisma.admin.create({
+        data: {
+          email: 'admin@example.com',
+          name: 'Super Admin',
+          passwordHash: adminPassword,
+          isSuperuser: true,
+        },
       })
       console.log('  Super Admin created (admin@example.com / admin123)')
     } else {
@@ -93,16 +97,20 @@ async function main() {
     }
 
     // Create editor admin
-    const editorExists = await db.select().from(admins).where(eq(admins.email, 'editor@example.com'))
-    if (editorExists.length === 0) {
+    const editorExists = await prisma.admin.findUnique({ where: { email: 'editor@example.com' } })
+    if (!editorExists) {
       const editorPassword = await bcrypt.hash('editor123', 10)
-      const [editor] = await db.insert(admins).values({
-        email: 'editor@example.com',
-        name: 'Editor Admin',
-        passwordHash: editorPassword,
-        isSuperuser: false,
-      }).returning()
-      await db.insert(adminRoles).values({ adminId: editor.id, roleId: editorRole.id })
+      const editor = await prisma.admin.create({
+        data: {
+          email: 'editor@example.com',
+          name: 'Editor Admin',
+          passwordHash: editorPassword,
+          isSuperuser: false,
+        },
+      })
+      await prisma.adminRole.create({
+        data: { adminId: editor.id, roleId: editorRole.id },
+      })
       console.log('  Editor Admin created (editor@example.com / editor123)')
     } else {
       console.log('  Editor Admin already exists')
@@ -118,9 +126,9 @@ async function main() {
     ]
 
     for (const u of testUsers) {
-      const exists = await db.select().from(users).where(eq(users.email, u.email))
-      if (exists.length === 0) {
-        await db.insert(users).values({ ...u, passwordHash: userPassword })
+      const exists = await prisma.user.findUnique({ where: { email: u.email } })
+      if (!exists) {
+        await prisma.user.create({ data: { ...u, passwordHash: userPassword } })
         console.log(`  User ${u.name} created (${u.email} / user123)`)
       } else {
         console.log(`  User ${u.email} already exists`)
@@ -138,7 +146,7 @@ async function main() {
     console.error('Seed error:', error.message)
     process.exit(1)
   } finally {
-    await client.end()
+    await prisma.$disconnect()
   }
 }
 

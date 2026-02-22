@@ -13,6 +13,7 @@ import type {
 import type {
   permissionEnum,
   sessionSchema,
+  registerSchema,
 } from '../schemas/auth'
 import type {
   roleSchema,
@@ -25,6 +26,7 @@ export type User = z.infer<typeof userSchema>
 export type CreateUser = z.infer<typeof createUserSchema>
 export type UpdateUser = z.infer<typeof updateUserSchema>
 export type LoginInput = z.infer<typeof loginSchema>
+export type RegisterInput = z.infer<typeof registerSchema>
 
 // Admin types
 export type Admin = z.infer<typeof adminSchema>

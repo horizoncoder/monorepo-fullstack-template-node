@@ -1,8 +1,11 @@
 #!/bin/sh
 set -e
 
+echo "Generating Prisma client..."
+npx prisma generate
+
 echo "Running database schema push..."
-pnpm db:push
+npx prisma db push
 
 echo "Seeding database..."
 pnpm db:seed

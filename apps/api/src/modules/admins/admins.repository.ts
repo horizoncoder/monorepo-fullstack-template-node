@@ -1,28 +1,14 @@
-import { eq } from 'drizzle-orm'
-import { db } from '../../db'
-import { admins } from '../../db/schema/admins'
-import { adminRoles, rolePermissions, roles, permissions } from '../../db/schema/permissions'
+import { prisma } from '../../db'
 
-// Helper: get admin's roles and resolved permissions
-async function getAdminRolesAndPermissions(adminId: string) {
-  const adminRoleRows = await db
-    .select({
-      roleId: roles.id,
-      roleName: roles.name,
-      permissionKey: permissions.key,
-    })
-    .from(adminRoles)
-    .innerJoin(roles, eq(adminRoles.roleId, roles.id))
-    .leftJoin(rolePermissions, eq(roles.id, rolePermissions.roleId))
-    .leftJoin(permissions, eq(rolePermissions.permissionId, permissions.id))
-    .where(eq(adminRoles.adminId, adminId))
-
+function resolveRolesAndPermissions(adminRoles: any[]) {
   const rolesMap = new Map<string, { id: string; name: string }>()
   const permissionSet = new Set<string>()
 
-  for (const row of adminRoleRows) {
-    rolesMap.set(row.roleId, { id: row.roleId, name: row.roleName })
-    if (row.permissionKey) permissionSet.add(row.permissionKey)
+  for (const ar of adminRoles) {
+    rolesMap.set(ar.role.id, { id: ar.role.id, name: ar.role.name })
+    for (const rp of ar.role.rolePermissions) {
+      permissionSet.add(rp.permission.key)
+    }
   }
 
   return {
@@ -31,94 +17,132 @@ async function getAdminRolesAndPermissions(adminId: string) {
   }
 }
 
+const adminWithRolesInclude = {
+  adminRoles: {
+    include: {
+      role: {
+        include: {
+          rolePermissions: {
+            include: { permission: true },
+          },
+        },
+      },
+    },
+  },
+} as const
+
 export const adminsRepository = {
   async findAll() {
-    const allAdmins = await db.select({
-      id: admins.id,
-      email: admins.email,
-      name: admins.name,
-      isSuperuser: admins.isSuperuser,
-      createdAt: admins.createdAt,
-      updatedAt: admins.updatedAt,
-    }).from(admins)
+    const allAdmins = await prisma.admin.findMany({
+      select: {
+        id: true,
+        email: true,
+        name: true,
+        isSuperuser: true,
+        createdAt: true,
+        updatedAt: true,
+        ...adminWithRolesInclude,
+      },
+    })
 
-    return Promise.all(allAdmins.map(async (admin) => {
-      const { roles, permissions } = await getAdminRolesAndPermissions(admin.id)
-      return { ...admin, roles, permissions }
-    }))
+    return allAdmins.map((admin) => {
+      const { adminRoles, ...rest } = admin
+      return { ...rest, ...resolveRolesAndPermissions(adminRoles) }
+    })
   },
 
   async findById(id: string) {
-    const [admin] = await db.select({
-      id: admins.id,
-      email: admins.email,
-      name: admins.name,
-      isSuperuser: admins.isSuperuser,
-      createdAt: admins.createdAt,
-      updatedAt: admins.updatedAt,
-    }).from(admins).where(eq(admins.id, id))
+    const admin = await prisma.admin.findUnique({
+      where: { id },
+      select: {
+        id: true,
+        email: true,
+        name: true,
+        isSuperuser: true,
+        createdAt: true,
+        updatedAt: true,
+        ...adminWithRolesInclude,
+      },
+    })
     if (!admin) return null
 
-    const { roles, permissions } = await getAdminRolesAndPermissions(admin.id)
-    return { ...admin, roles, permissions }
+    const { adminRoles, ...rest } = admin
+    return { ...rest, ...resolveRolesAndPermissions(adminRoles) }
   },
 
   async findByEmail(email: string) {
-    const [admin] = await db.select().from(admins).where(eq(admins.email, email))
-    return admin ?? null
+    return prisma.admin.findUnique({ where: { email } })
   },
 
   async create(data: { email: string; name: string; passwordHash: string; isSuperuser: boolean }) {
-    const [admin] = await db.insert(admins).values({
-      email: data.email,
-      name: data.name,
-      passwordHash: data.passwordHash,
-      isSuperuser: data.isSuperuser,
-    }).returning({
-      id: admins.id,
-      email: admins.email,
-      name: admins.name,
-      isSuperuser: admins.isSuperuser,
-      createdAt: admins.createdAt,
-      updatedAt: admins.updatedAt,
+    return prisma.admin.create({
+      data,
+      select: {
+        id: true,
+        email: true,
+        name: true,
+        isSuperuser: true,
+        createdAt: true,
+        updatedAt: true,
+      },
     })
-    return admin
   },
 
   async update(id: string, data: Partial<{ email: string; name: string; passwordHash: string; isSuperuser: boolean }>) {
-    const [admin] = await db.update(admins)
-      .set({ ...data, updatedAt: new Date() })
-      .where(eq(admins.id, id))
-      .returning({
-        id: admins.id,
-        email: admins.email,
-        name: admins.name,
-        isSuperuser: admins.isSuperuser,
-        createdAt: admins.createdAt,
-        updatedAt: admins.updatedAt,
+    try {
+      return await prisma.admin.update({
+        where: { id },
+        data,
+        select: {
+          id: true,
+          email: true,
+          name: true,
+          isSuperuser: true,
+          createdAt: true,
+          updatedAt: true,
+        },
       })
-    return admin ?? null
+    } catch {
+      return null
+    }
   },
 
   async setRoles(adminId: string, roleIds: string[]) {
-    await db.delete(adminRoles).where(eq(adminRoles.adminId, adminId))
+    await prisma.adminRole.deleteMany({ where: { adminId } })
 
     if (roleIds.length > 0) {
-      await db.insert(adminRoles).values(
-        roleIds.map((roleId) => ({ adminId, roleId })),
-      )
+      await prisma.adminRole.createMany({
+        data: roleIds.map((roleId) => ({ adminId, roleId })),
+      })
     }
   },
 
   async delete(id: string) {
-    const [deleted] = await db.delete(admins).where(eq(admins.id, id)).returning({ id: admins.id })
-    return !!deleted
+    try {
+      await prisma.admin.delete({ where: { id } })
+      return true
+    } catch {
+      return false
+    }
   },
 
   async count() {
-    const result = await db.select({ id: admins.id }).from(admins)
-    return result.length
+    return prisma.admin.count()
   },
 
-  getAdminRolesAndPermissions,
+  async getAdminRolesAndPermissions(adminId: string) {
+    const adminRoles = await prisma.adminRole.findMany({
+      where: { adminId },
+      include: {
+        role: {
+          include: {
+            rolePermissions: {
+              include: { permission: true },
+            },
+          },
+        },
+      },
+    })
+    return resolveRolesAndPermissions(adminRoles)
+  },
 }

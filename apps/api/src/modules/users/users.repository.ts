@@ -1,70 +1,48 @@
-import { eq } from 'drizzle-orm'
-import { db } from '../../db'
-import { users } from '../../db/schema/users'
+import { prisma } from '../../db'
+
+const selectPublic = {
+  id: true,
+  email: true,
+  name: true,
+  createdAt: true,
+  updatedAt: true,
+} as const
 
 export const usersRepository = {
   async findAll() {
-    return db.select({
-      id: users.id,
-      email: users.email,
-      name: users.name,
-      createdAt: users.createdAt,
-      updatedAt: users.updatedAt,
-    }).from(users)
+    return prisma.user.findMany({ select: selectPublic })
   },
 
   async findById(id: string) {
-    const [user] = await db.select({
-      id: users.id,
-      email: users.email,
-      name: users.name,
-      createdAt: users.createdAt,
-      updatedAt: users.updatedAt,
-    }).from(users).where(eq(users.id, id))
-    return user ?? null
+    return prisma.user.findUnique({ where: { id }, select: selectPublic })
   },
 
   async findByEmail(email: string) {
-    const [user] = await db.select().from(users).where(eq(users.email, email))
-    return user ?? null
+    return prisma.user.findUnique({ where: { email } })
   },
 
   async create(data: { email: string; name: string; passwordHash: string }) {
-    const [user] = await db.insert(users).values({
-      email: data.email,
-      name: data.name,
-      passwordHash: data.passwordHash,
-    }).returning({
-      id: users.id,
-      email: users.email,
-      name: users.name,
-      createdAt: users.createdAt,
-      updatedAt: users.updatedAt,
-    })
-    return user
+    return prisma.user.create({ data, select: selectPublic })
   },
 
   async update(id: string, data: Partial<{ email: string; name: string; passwordHash: string }>) {
-    const [user] = await db.update(users)
-      .set({ ...data, updatedAt: new Date() })
-      .where(eq(users.id, id))
-      .returning({
-        id: users.id,
-        email: users.email,
-        name: users.name,
-        createdAt: users.createdAt,
-        updatedAt: users.updatedAt,
-      })
-    return user ?? null
+    try {
+      return await prisma.user.update({ where: { id }, data, select: selectPublic })
+    } catch {
+      return null
+    }
   },
 
   async delete(id: string) {
-    const [deleted] = await db.delete(users).where(eq(users.id, id)).returning({ id: users.id })
-    return !!deleted
+    try {
+      await prisma.user.delete({ where: { id } })
+      return true
+    } catch {
+      return false
+    }
   },
 
   async count() {
-    const result = await db.select({ id: users.id }).from(users)
-    return result.length
+    return prisma.user.count()
   },
 }

@@ -1,6 +1,6 @@
 import { Hono } from 'hono'
 import { zValidator } from '@hono/zod-validator'
-import { loginSchema } from '@repo/shared'
+import { loginSchema, registerSchema } from '@repo/shared'
 import { getCookie, setCookie, deleteCookie } from 'hono/cookie'
 import { authService } from './auth.service'
 
@@ -50,6 +50,12 @@ export const adminAuthProtectedRoutes = new Hono()
   })
 
 export const clientAuthRoutes = new Hono()
+  .post('/register', zValidator('json', registerSchema), async (c) => {
+    const data = c.req.valid('json')
+    const { session, user } = await authService.userRegister(data)
+    setCookie(c, 'user_session', session.id, COOKIE_OPTIONS)
+    return c.json({ data: { id: user.id, email: user.email, name: user.name } }, 201)
+  })
   .post('/login', zValidator('json', loginSchema), async (c) => {
     const { email, password } = c.req.valid('json')
     const { session, user } = await authService.userLogin(email, password)

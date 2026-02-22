@@ -1,6 +1,7 @@
 import bcrypt from 'bcrypt'
 import { HTTPException } from 'hono/http-exception'
 import { authRepository } from './auth.repository'
+import { usersRepository } from '../users/users.repository'
 
 const SESSION_DURATION_MS = 7 * 24 * 60 * 60 * 1000 // 7 days
 
@@ -26,6 +27,25 @@ export const authService = {
     })
 
     return { session, admin }
+  },
+
+  async userRegister(data: { name: string; email: string; password: string }) {
+    const existing = await authRepository.findUserByEmail(data.email)
+    if (existing) throw new HTTPException(409, { message: 'Email already registered' })
+
+    const passwordHash = await this.hashPassword(data.password)
+    const user = await usersRepository.create({
+      email: data.email,
+      name: data.name,
+      passwordHash,
+    })
+
+    const session = await authRepository.createSession({
+      userId: user.id,
+      expiresAt: new Date(Date.now() + SESSION_DURATION_MS),
+    })
+
+    return { session, user }
   },
 
   async userLogin(email: string, password: string) {

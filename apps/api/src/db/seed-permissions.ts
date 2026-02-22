@@ -1,9 +1,5 @@
-import { drizzle } from 'drizzle-orm/postgres-js'
-import postgres from 'postgres'
-import { permissions } from './schema/permissions'
-import { sql } from 'drizzle-orm'
+import { PrismaClient } from '@prisma/client'
 
-// All available permissions in the system
 const PERMISSIONS = [
   // Users management
   { key: 'users.read', name: 'View Users', description: 'View user list and details', group: 'Users' },
@@ -22,20 +18,19 @@ const PERMISSIONS = [
 ]
 
 export async function seedPermissions() {
-  const connectionString = process.env.DATABASE_URL || 'postgres://postgres:postgres@localhost:5432/saas'
-  const client = postgres(connectionString)
-  const db = drizzle(client)
+  const prisma = new PrismaClient()
 
   try {
     for (const perm of PERMISSIONS) {
-      await db.insert(permissions).values(perm).onConflictDoUpdate({
-        target: permissions.key,
-        set: { name: sql`excluded.name`, description: sql`excluded.description`, group: sql`excluded.group` },
+      await prisma.permission.upsert({
+        where: { key: perm.key },
+        update: { name: perm.name, description: perm.description, group: perm.group },
+        create: perm,
       })
     }
     console.log(`Seeded ${PERMISSIONS.length} permissions`)
   } finally {
-    await client.end()
+    await prisma.$disconnect()
   }
 }
 
