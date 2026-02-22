@@ -1,0 +1,11 @@
+{
+  "common": {
+    "nav": { "adminPanel": "Admin Panel", "dashboard": "Dashboard", "users": "Users", "products": "Products" },
+    "theme": "Theme", "loading": "Loading...", "delete": "Delete",
+    "previous": "Previous", "next": "Next", "noResults": "No results.",
+    "page": "Page {current} of {total}"
+  },
+  "dashboard": { "title": "Dashboard", "usersCount": "Users", "productsCount": "Products" },
+  "users": { "title": "Users", "name": "Name", "email": "Email", "role": "Role", "created": "Created" },
+  "products": { "title": "Products", "name": "Name", "description": "Description", "price": "Price", "stock": "Stock", "created": "Created" }
+}

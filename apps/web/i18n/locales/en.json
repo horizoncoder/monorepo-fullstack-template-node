@@ -1,0 +1,22 @@
+{
+  "common": {
+    "nav": { "store": "Store", "products": "Products" },
+    "theme": "Theme",
+    "loading": "Loading...",
+    "error": "Error",
+    "back": "Back"
+  },
+  "home": {
+    "title": "Welcome to the Store",
+    "subtitle": "Browse our products and find what you need.",
+    "viewProducts": "View Products"
+  },
+  "products": {
+    "title": "Products",
+    "loading": "Loading products...",
+    "inStock": "{count} in stock",
+    "outOfStock": "Out of stock",
+    "viewDetails": "View Details",
+    "backToProducts": "Back to Products"
+  }
+}

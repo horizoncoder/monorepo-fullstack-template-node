@@ -1,0 +1,24 @@
+{
+  "name": "@repo/ui",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "main": "./nuxt.config.ts",
+  "scripts": {
+    "typecheck": "nuxt typecheck"
+  },
+  "dependencies": {
+    "class-variance-authority": "^0.7.0",
+    "clsx": "^2.1.0",
+    "lucide-vue-next": "^0.460.0",
+    "radix-vue": "^1.9.0",
+    "tailwind-merge": "^2.6.0"
+  },
+  "devDependencies": {
+    "@nuxtjs/tailwindcss": "^6.12.0",
+    "nuxt": "^3.15.0",
+    "tailwindcss": "^3.4.0",
+    "tailwindcss-animate": "^1.0.7",
+    "typescript": "^5.7.0"
+  }
+}

@@ -1,0 +1,11 @@
+{
+  "common": {
+    "nav": { "adminPanel": "Адмін-панель", "dashboard": "Дашборд", "users": "Користувачі", "products": "Товари" },
+    "theme": "Тема", "loading": "Завантаження...", "delete": "Видалити",
+    "previous": "Назад", "next": "Вперед", "noResults": "Немає даних.",
+    "page": "Сторінка {current} з {total}"
+  },
+  "dashboard": { "title": "Дашборд", "usersCount": "Користувачі", "productsCount": "Товари" },
+  "users": { "title": "Користувачі", "name": "Ім'я", "email": "Email", "role": "Роль", "created": "Створено" },
+  "products": { "title": "Товари", "name": "Назва", "description": "Опис", "price": "Ціна", "stock": "Залишок", "created": "Створено" }
+}
