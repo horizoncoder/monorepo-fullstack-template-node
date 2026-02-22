@@ -8,3 +8,10 @@ dist
 .env
 .env.*
 !.env.example
+
+# SSL certificates
+nginx/certs/*.key
+nginx/certs/*.crt
+
+# Drizzle
+apps/api/drizzle

@@ -1,16 +1,26 @@
 import { Hono } from 'hono'
 import { zValidator } from '@hono/zod-validator'
 import { createUserSchema, updateUserSchema } from '@repo/shared'
-import { usersController } from './users.controller'
+import { usersService } from './users.service'
 
-const adminUserRoutes = new Hono()
-  .get('/', (c) => usersController.getAll(c))
-  .get('/:id', (c) => usersController.getById(c))
-  .post('/', zValidator('json', createUserSchema), (c) => usersController.create(c))
-  .patch('/:id', zValidator('json', updateUserSchema), (c) => usersController.update(c))
-  .delete('/:id', (c) => usersController.delete(c))
-
-const clientUserRoutes = new Hono()
-  .get('/:id', (c) => usersController.getById(c))
-
-export { adminUserRoutes, clientUserRoutes }
+export const adminUserRoutes = new Hono()
+  .get('/', async (c) => {
+    const users = await usersService.getAll()
+    return c.json({ data: users })
+  })
+  .get('/:id', async (c) => {
+    const user = await usersService.getById(c.req.param('id'))
+    return c.json({ data: user })
+  })
+  .post('/', zValidator('json', createUserSchema), async (c) => {
+    const user = await usersService.create(c.req.valid('json'))
+    return c.json({ data: user }, 201)
+  })
+  .patch('/:id', zValidator('json', updateUserSchema), async (c) => {
+    const user = await usersService.update(c.req.param('id'), c.req.valid('json'))
+    return c.json({ data: user })
+  })
+  .delete('/:id', async (c) => {
+    await usersService.delete(c.req.param('id'))
+    return c.json({ message: 'User deleted' })
+  })

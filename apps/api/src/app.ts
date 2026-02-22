@@ -7,9 +7,16 @@ import { errorHandler } from './middleware/error-handler'
 
 const app = new Hono()
 
+const corsOrigins = process.env.CORS_ORIGINS
+  ? process.env.CORS_ORIGINS.split(',')
+  : ['https://develop', 'https://api.develop']
+
 // Global middleware
 app.use('*', logger())
-app.use('*', cors())
+app.use('*', cors({
+  origin: corsOrigins,
+  credentials: true,
+}))
 app.use('*', errorHandler())
 
 // Health check

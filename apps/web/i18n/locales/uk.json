@@ -1,22 +1,33 @@
 {
   "common": {
-    "nav": { "store": "Магазин", "products": "Товари" },
+    "appName": "SaaS Додаток",
+    "nav": { "dashboard": "Дашборд" },
     "theme": "Тема",
     "loading": "Завантаження...",
     "error": "Помилка",
-    "back": "Назад"
+    "logout": "Вийти"
   },
-  "home": {
-    "title": "Ласкаво просимо до магазину",
-    "subtitle": "Переглядайте наші товари та знаходьте те, що вам потрібно.",
-    "viewProducts": "Переглянути товари"
+  "auth": {
+    "login": "Вхід",
+    "welcomeBack": "Ласкаво просимо",
+    "loginSubtitle": "Увійдіть у свій обліковий запис",
+    "email": "Email",
+    "emailPlaceholder": "you@example.com",
+    "password": "Пароль",
+    "passwordPlaceholder": "Введіть пароль",
+    "signIn": "Увійти",
+    "invalidCredentials": "Невірний email або пароль",
+    "loginSuccess": "Ласкаво просимо!"
   },
-  "products": {
-    "title": "Товари",
-    "loading": "Завантаження товарів...",
-    "inStock": "{count} в наявності",
-    "outOfStock": "Немає в наявності",
-    "viewDetails": "Детальніше",
-    "backToProducts": "Назад до товарів"
+  "dashboard": {
+    "title": "Дашборд",
+    "welcome": "Ласкаво просимо, {name}!",
+    "subtitle": "Ось огляд вашого облікового запису.",
+    "profile": "Профіль",
+    "email": "Email",
+    "status": "Статус акаунта",
+    "active": "Активний",
+    "recentActivity": "Остання активність",
+    "noRecentActivity": "Немає останньої активності."
   }
 }

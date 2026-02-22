@@ -1,37 +1,42 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/vue-query'
-import type { User, CreateUser, ApiResponse } from '@repo/shared'
+
+interface User {
+  id: string
+  email: string
+  name: string
+  createdAt: string
+  updatedAt: string
+}
 
 export function useAdminUsers() {
-  const client = useAdminClient()
+  const client = useAdminFetch()
   return useQuery({
     queryKey: ['admin', 'users'],
     queryFn: async (): Promise<User[]> => {
-      const res = await client.api.admin.users.$get()
-      const json = (await res.json()) as ApiResponse<User[]>
-      return json.data
+      const res = await client.get<{ data: User[] }>('/api/admin/users')
+      return res.data
     },
   })
 }
 
 export function useCreateUser() {
-  const client = useAdminClient()
+  const client = useAdminFetch()
   const queryClient = useQueryClient()
   return useMutation({
-    mutationFn: async (data: CreateUser) => {
-      const res = await client.api.admin.users.$post({ json: data })
-      const json = (await res.json()) as ApiResponse<User>
-      return json.data
+    mutationFn: async (data: { email: string; name: string; password: string }) => {
+      const res = await client.post<{ data: User }>('/api/admin/users', data)
+      return res.data
     },
     onSuccess: () => { queryClient.invalidateQueries({ queryKey: ['admin', 'users'] }) },
   })
 }
 
 export function useDeleteUser() {
-  const client = useAdminClient()
+  const client = useAdminFetch()
   const queryClient = useQueryClient()
   return useMutation({
     mutationFn: async (id: string) => {
-      await client.api.admin.users[':id'].$delete({ param: { id } })
+      await client.del(`/api/admin/users/${id}`)
     },
     onSuccess: () => { queryClient.invalidateQueries({ queryKey: ['admin', 'users'] }) },
   })

@@ -1,62 +1,70 @@
-import type { User, CreateUser, UpdateUser } from '@repo/shared'
-import { randomUUID } from 'crypto'
-
-const users: User[] = [
-  {
-    id: '550e8400-e29b-41d4-a716-446655440001',
-    email: 'admin@example.com',
-    name: 'Admin User',
-    role: 'admin',
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString(),
-  },
-  {
-    id: '550e8400-e29b-41d4-a716-446655440002',
-    email: 'user@example.com',
-    name: 'Regular User',
-    role: 'user',
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString(),
-  },
-]
+import { eq } from 'drizzle-orm'
+import { db } from '../../db'
+import { users } from '../../db/schema/users'
 
 export const usersRepository = {
-  findAll(): User[] {
-    return users
+  async findAll() {
+    return db.select({
+      id: users.id,
+      email: users.email,
+      name: users.name,
+      createdAt: users.createdAt,
+      updatedAt: users.updatedAt,
+    }).from(users)
   },
 
-  findById(id: string): User | undefined {
-    return users.find((u) => u.id === id)
+  async findById(id: string) {
+    const [user] = await db.select({
+      id: users.id,
+      email: users.email,
+      name: users.name,
+      createdAt: users.createdAt,
+      updatedAt: users.updatedAt,
+    }).from(users).where(eq(users.id, id))
+    return user ?? null
   },
 
-  findByEmail(email: string): User | undefined {
-    return users.find((u) => u.email === email)
+  async findByEmail(email: string) {
+    const [user] = await db.select().from(users).where(eq(users.email, email))
+    return user ?? null
   },
 
-  create(data: CreateUser): User {
-    const now = new Date().toISOString()
-    const user: User = {
-      id: randomUUID(),
-      ...data,
-      role: data.role ?? 'user',
-      createdAt: now,
-      updatedAt: now,
-    }
-    users.push(user)
+  async create(data: { email: string; name: string; passwordHash: string }) {
+    const [user] = await db.insert(users).values({
+      email: data.email,
+      name: data.name,
+      passwordHash: data.passwordHash,
+    }).returning({
+      id: users.id,
+      email: users.email,
+      name: users.name,
+      createdAt: users.createdAt,
+      updatedAt: users.updatedAt,
+    })
     return user
   },
 
-  update(id: string, data: UpdateUser): User | undefined {
-    const index = users.findIndex((u) => u.id === id)
-    if (index === -1) return undefined
-    users[index] = { ...users[index], ...data, updatedAt: new Date().toISOString() }
-    return users[index]
+  async update(id: string, data: Partial<{ email: string; name: string; passwordHash: string }>) {
+    const [user] = await db.update(users)
+      .set({ ...data, updatedAt: new Date() })
+      .where(eq(users.id, id))
+      .returning({
+        id: users.id,
+        email: users.email,
+        name: users.name,
+        createdAt: users.createdAt,
+        updatedAt: users.updatedAt,
+      })
+    return user ?? null
   },
 
-  delete(id: string): boolean {
-    const index = users.findIndex((u) => u.id === id)
-    if (index === -1) return false
-    users.splice(index, 1)
-    return true
+  async delete(id: string) {
+    const [deleted] = await db.delete(users).where(eq(users.id, id)).returning({ id: users.id })
+    return !!deleted
+  },
+
+  async count() {
+    const result = await db.select({ id: users.id }).from(users)
+    return result.length
   },
 }

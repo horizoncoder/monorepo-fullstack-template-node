@@ -1,22 +1,33 @@
 {
   "common": {
-    "nav": { "store": "Store", "products": "Products" },
+    "appName": "SaaS App",
+    "nav": { "dashboard": "Dashboard" },
     "theme": "Theme",
     "loading": "Loading...",
     "error": "Error",
-    "back": "Back"
+    "logout": "Sign out"
   },
-  "home": {
-    "title": "Welcome to the Store",
-    "subtitle": "Browse our products and find what you need.",
-    "viewProducts": "View Products"
+  "auth": {
+    "login": "Sign In",
+    "welcomeBack": "Welcome back",
+    "loginSubtitle": "Sign in to your account to continue",
+    "email": "Email",
+    "emailPlaceholder": "you@example.com",
+    "password": "Password",
+    "passwordPlaceholder": "Enter your password",
+    "signIn": "Sign in",
+    "invalidCredentials": "Invalid email or password",
+    "loginSuccess": "Welcome back!"
   },
-  "products": {
-    "title": "Products",
-    "loading": "Loading products...",
-    "inStock": "{count} in stock",
-    "outOfStock": "Out of stock",
-    "viewDetails": "View Details",
-    "backToProducts": "Back to Products"
+  "dashboard": {
+    "title": "Dashboard",
+    "welcome": "Welcome back, {name}!",
+    "subtitle": "Here's an overview of your account.",
+    "profile": "Profile",
+    "email": "Email",
+    "status": "Account Status",
+    "active": "Active",
+    "recentActivity": "Recent Activity",
+    "noRecentActivity": "No recent activity to show."
   }
 }

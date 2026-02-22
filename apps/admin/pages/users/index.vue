@@ -1,7 +1,16 @@
 <script setup lang="ts">
 import { h } from 'vue'
 import type { ColumnDef } from '@tanstack/vue-table'
-import type { User } from '@repo/shared'
+
+definePageMeta({ middleware: ['auth'] })
+
+interface User {
+  id: string
+  email: string
+  name: string
+  createdAt: string
+  updatedAt: string
+}
 
 const { t } = useI18n()
 useHead({ title: t('users.title') })
@@ -11,7 +20,6 @@ const { mutate: deleteUser } = useDeleteUser()
 const columns: ColumnDef<User>[] = [
   { accessorKey: 'name', header: () => t('users.name') },
   { accessorKey: 'email', header: () => t('users.email') },
-  { accessorKey: 'role', header: () => t('users.role'), cell: ({ row }) => h(Badge, { variant: row.getValue<string>('role') === 'admin' ? 'default' : 'secondary' }, () => row.getValue('role')) },
   { accessorKey: 'createdAt', header: () => t('users.created'), cell: ({ row }) => new Date(row.getValue<string>('createdAt')).toLocaleDateString() },
   { id: 'actions', header: '', cell: ({ row }) => h(Button, { variant: 'destructive', size: 'sm', onClick: () => deleteUser(row.original.id) }, () => t('common.delete')) },
 ]
@@ -19,8 +27,14 @@ const columns: ColumnDef<User>[] = [
 
 <template>
   <div class="space-y-6">
-    <h1 class="text-3xl font-bold tracking-tight">{{ t('users.title') }}</h1>
-    <div v-if="isPending" class="text-muted-foreground">{{ t('common.loading') }}</div>
-    <DataTable v-else :columns="columns" :data="users ?? []" />
+    <div class="flex items-center justify-between">
+      <h1 class="text-3xl font-bold tracking-tight text-gray-900 dark:text-white">{{ t('users.title') }}</h1>
+    </div>
+    <Card class="border-gray-200 dark:border-gray-800">
+      <CardContent class="p-0">
+        <div v-if="isPending" class="p-6 text-muted-foreground">{{ t('common.loading') }}</div>
+        <DataTable v-else :columns="columns" :data="users ?? []" />
+      </CardContent>
+    </Card>
   </div>
 </template>

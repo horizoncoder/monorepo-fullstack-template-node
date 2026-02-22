@@ -1,11 +1,61 @@
 {
   "common": {
-    "nav": { "adminPanel": "Admin Panel", "dashboard": "Dashboard", "users": "Users", "products": "Products" },
-    "theme": "Theme", "loading": "Loading...", "delete": "Delete",
-    "previous": "Previous", "next": "Next", "noResults": "No results.",
+    "nav": { "adminPanel": "Admin Panel", "dashboard": "Dashboard", "users": "Users", "admins": "Admins", "roles": "Roles" },
+    "theme": "Theme",
+    "loading": "Loading...",
+    "delete": "Delete",
+    "edit": "Edit",
+    "save": "Save",
+    "cancel": "Cancel",
+    "logout": "Sign out",
+    "previous": "Previous",
+    "next": "Next",
+    "noResults": "No results.",
     "page": "Page {current} of {total}"
   },
-  "dashboard": { "title": "Dashboard", "usersCount": "Users", "productsCount": "Products" },
-  "users": { "title": "Users", "name": "Name", "email": "Email", "role": "Role", "created": "Created" },
-  "products": { "title": "Products", "name": "Name", "description": "Description", "price": "Price", "stock": "Stock", "created": "Created" }
+  "auth": {
+    "login": "Admin Sign In",
+    "adminLogin": "Admin Panel",
+    "adminLoginSubtitle": "Sign in to the admin panel",
+    "email": "Email",
+    "emailPlaceholder": "admin@example.com",
+    "password": "Password",
+    "passwordPlaceholder": "Enter your password",
+    "signIn": "Sign in",
+    "invalidCredentials": "Invalid email or password",
+    "loginSuccess": "Welcome back!"
+  },
+  "dashboard": {
+    "title": "Dashboard",
+    "subtitle": "Overview of your SaaS platform.",
+    "usersCount": "Total Users",
+    "adminsCount": "Total Admins",
+    "rolesCount": "Roles"
+  },
+  "users": {
+    "title": "Users",
+    "name": "Name",
+    "email": "Email",
+    "created": "Created"
+  },
+  "admins": {
+    "title": "Admins",
+    "name": "Name",
+    "email": "Email",
+    "role": "Type",
+    "roles": "Roles",
+    "permissions": "Permissions",
+    "created": "Created"
+  },
+  "roles": {
+    "title": "Roles",
+    "name": "Name",
+    "namePlaceholder": "e.g. Editor",
+    "description": "Description",
+    "descriptionPlaceholder": "What this role is for...",
+    "permissions": "Permissions",
+    "created": "Created",
+    "create": "Create Role",
+    "edit": "Edit Role"
+  }
 }
