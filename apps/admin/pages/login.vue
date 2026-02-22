@@ -29,7 +29,7 @@ const onSubmit = handleSubmit(async (values) => {
   <div class="w-full max-w-md">
     <!-- Logo & Header -->
     <div class="text-center mb-8">
-      <div class="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-gradient-to-br from-orange-400 to-red-500 text-white text-xl font-bold mb-4 shadow-lg shadow-orange-500/25">A</div>
+      <div class="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-gradient-to-br from-emerald-500 to-green-600 text-white text-xl font-bold mb-4 shadow-lg shadow-emerald-500/25">A</div>
       <h1 class="text-2xl font-bold text-gray-900 dark:text-white">{{ t('auth.adminLogin') }}</h1>
       <p class="mt-2 text-sm text-gray-500 dark:text-gray-400">{{ t('auth.adminLoginSubtitle') }}</p>
     </div>
@@ -62,7 +62,7 @@ const onSubmit = handleSubmit(async (values) => {
             <p v-if="errors.password" class="text-xs text-red-500">{{ errors.password }}</p>
           </div>
 
-          <Button type="submit" class="w-full h-11 bg-gradient-to-r from-orange-400 to-red-500 hover:from-orange-500 hover:to-red-600 text-white shadow-lg shadow-orange-500/25" :disabled="isSubmitting">
+          <Button type="submit" class="w-full h-11 bg-gradient-to-r from-emerald-500 to-green-600 hover:from-emerald-600 hover:to-green-700 text-white shadow-lg shadow-emerald-500/25" :disabled="isSubmitting">
             {{ isSubmitting ? t('common.loading') : t('auth.signIn') }}
           </Button>
         </form>

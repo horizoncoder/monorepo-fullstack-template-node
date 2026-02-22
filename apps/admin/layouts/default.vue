@@ -34,7 +34,7 @@ async function handleLogout() {
       <!-- Logo -->
       <div class="h-16 flex items-center px-6 border-b border-gray-800">
         <div class="flex items-center gap-3">
-          <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-orange-400 to-red-500 flex items-center justify-center text-white font-bold text-sm">A</div>
+          <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-emerald-500 to-green-600 flex items-center justify-center text-white font-bold text-sm">A</div>
           <span class="text-lg font-semibold text-white">{{ t('common.nav.adminPanel') }}</span>
         </div>
       </div>
@@ -76,7 +76,7 @@ async function handleLogout() {
               class="flex items-center gap-2 px-3 py-1.5 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
               @click="showUserMenu = !showUserMenu"
             >
-              <div class="w-8 h-8 rounded-full bg-gradient-to-br from-orange-400 to-red-500 flex items-center justify-center text-white text-sm font-medium">
+              <div class="w-8 h-8 rounded-full bg-gradient-to-br from-emerald-500 to-green-600 flex items-center justify-center text-white text-sm font-medium">
                 {{ currentAdmin.name.charAt(0).toUpperCase() }}
               </div>
               <span class="text-sm font-medium text-gray-700 dark:text-gray-300">{{ currentAdmin.name }}</span>

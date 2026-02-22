@@ -10,10 +10,10 @@ useHead({ title: t('dashboard.title') })
 <template>
   <div class="space-y-8">
     <!-- Welcome Section -->
-    <div class="relative overflow-hidden rounded-2xl bg-gradient-to-r from-blue-500 via-indigo-500 to-purple-600 p-8 text-white">
+    <div class="relative overflow-hidden rounded-2xl bg-gradient-to-r from-emerald-500 via-green-500 to-teal-600 p-8 text-white">
       <div class="relative z-10">
         <h1 class="text-3xl font-bold">{{ t('dashboard.welcome', { name: currentUser?.name || '' }) }}</h1>
-        <p class="mt-2 text-blue-100 text-lg">{{ t('dashboard.subtitle') }}</p>
+        <p class="mt-2 text-emerald-100 text-lg">{{ t('dashboard.subtitle') }}</p>
       </div>
       <div class="absolute -right-10 -top-10 h-40 w-40 rounded-full bg-white/10"></div>
       <div class="absolute -right-5 -bottom-10 h-32 w-32 rounded-full bg-white/5"></div>
@@ -28,8 +28,8 @@ useHead({ title: t('dashboard.title') })
               <p class="text-sm font-medium text-gray-500 dark:text-gray-400">{{ t('dashboard.profile') }}</p>
               <p class="mt-1 text-2xl font-bold text-gray-900 dark:text-white">{{ currentUser?.name }}</p>
             </div>
-            <div class="h-12 w-12 rounded-xl bg-blue-50 dark:bg-blue-900/20 flex items-center justify-center">
-              <svg class="h-6 w-6 text-blue-600 dark:text-blue-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z" /></svg>
+            <div class="h-12 w-12 rounded-xl bg-emerald-50 dark:bg-emerald-900/20 flex items-center justify-center">
+              <svg class="h-6 w-6 text-emerald-600 dark:text-emerald-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z" /></svg>
             </div>
           </div>
         </CardContent>

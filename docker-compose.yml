@@ -47,6 +47,7 @@ services:
     depends_on:
       - api
     environment:
+      PORT: 3002
       NUXT_PUBLIC_API_BASE_URL: https://api.develop
     expose:
       - "3002"

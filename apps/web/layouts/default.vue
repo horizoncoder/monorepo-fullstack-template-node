@@ -29,7 +29,7 @@ async function handleLogout() {
       <!-- Logo -->
       <div class="h-16 flex items-center px-6 border-b border-gray-200 dark:border-gray-800">
         <div class="flex items-center gap-3">
-          <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center text-white font-bold text-sm">S</div>
+          <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-emerald-500 to-green-600 flex items-center justify-center text-white font-bold text-sm">S</div>
           <span class="text-lg font-semibold text-gray-900 dark:text-white">{{ t('common.appName') }}</span>
         </div>
       </div>
@@ -41,7 +41,7 @@ async function handleLogout() {
           :key="link.to"
           :to="link.to"
           class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-gray-900 dark:hover:text-white transition-colors"
-          active-class="!bg-blue-50 dark:!bg-blue-900/20 !text-blue-700 dark:!text-blue-400"
+          active-class="!bg-emerald-50 dark:!bg-emerald-900/20 !text-emerald-700 dark:!text-emerald-400"
         >
           <svg v-if="link.icon === 'dashboard'" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6A2.25 2.25 0 016 3.75h2.25A2.25 2.25 0 0110.5 6v2.25a2.25 2.25 0 01-2.25 2.25H6a2.25 2.25 0 01-2.25-2.25V6zM3.75 15.75A2.25 2.25 0 016 13.5h2.25a2.25 2.25 0 012.25 2.25V18a2.25 2.25 0 01-2.25 2.25H6A2.25 2.25 0 013.75 18v-2.25zM13.5 6a2.25 2.25 0 012.25-2.25H18A2.25 2.25 0 0120.25 6v2.25A2.25 2.25 0 0118 10.5h-2.25a2.25 2.25 0 01-2.25-2.25V6zM13.5 15.75a2.25 2.25 0 012.25-2.25H18a2.25 2.25 0 012.25 2.25V18A2.25 2.25 0 0118 20.25h-2.25A2.25 2.25 0 0113.5 18v-2.25z" /></svg>
           {{ link.label }}
@@ -68,7 +68,7 @@ async function handleLogout() {
               class="flex items-center gap-2 px-3 py-1.5 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
               @click="showUserMenu = !showUserMenu"
             >
-              <div class="w-8 h-8 rounded-full bg-gradient-to-br from-blue-400 to-purple-500 flex items-center justify-center text-white text-sm font-medium">
+              <div class="w-8 h-8 rounded-full bg-gradient-to-br from-emerald-400 to-teal-500 flex items-center justify-center text-white text-sm font-medium">
                 {{ authStore.user.name.charAt(0).toUpperCase() }}
               </div>
               <span class="text-sm font-medium text-gray-700 dark:text-gray-300">{{ authStore.user.name }}</span>
