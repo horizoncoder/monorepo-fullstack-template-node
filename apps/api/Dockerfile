@@ -4,7 +4,7 @@ RUN corepack enable && corepack prepare pnpm@9.15.0 --activate
 WORKDIR /app
 
 # Copy root workspace config
-COPY package.json pnpm-workspace.yaml pnpm-lock.yaml ./
+COPY package.json pnpm-workspace.yaml pnpm-lock.yaml tsconfig.json ./
 COPY packages/shared/package.json ./packages/shared/
 COPY apps/api/package.json ./apps/api/
 
@@ -19,4 +19,4 @@ WORKDIR /app/apps/api
 
 EXPOSE 3001
 
-CMD ["pnpm", "dev"]
+CMD ["/app/apps/api/docker-entrypoint.sh"]

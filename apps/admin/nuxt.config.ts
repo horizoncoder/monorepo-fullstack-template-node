@@ -9,7 +9,7 @@ export default defineNuxtConfig({
       { code: 'uk', name: 'Українська', file: 'uk.json' },
     ],
     lazy: true,
-    langDir: 'i18n/locales',
+    langDir: 'locales',
     defaultLocale: 'en',
     strategy: 'no_prefix',
     bundle: { fullInstall: false },

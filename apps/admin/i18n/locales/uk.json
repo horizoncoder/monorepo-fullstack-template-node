@@ -18,7 +18,7 @@
     "adminLogin": "Адмін-панель",
     "adminLoginSubtitle": "Увійдіть в адмін-панель",
     "email": "Email",
-    "emailPlaceholder": "admin@example.com",
+    "emailPlaceholder": "admin{'@'}example.com",
     "password": "Пароль",
     "passwordPlaceholder": "Введіть пароль",
     "signIn": "Увійти",

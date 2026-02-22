@@ -1,6 +1,6 @@
-export { useAdminAuthStore } from '../stores/auth'
+import { useAdminAuthStore } from '../stores/auth'
 
-// Backwards-compatible wrapper
+// Backwards-compatible wrapper used by existing pages/layouts
 export function useAdminAuth() {
   const store = useAdminAuthStore()
   return {

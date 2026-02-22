@@ -13,7 +13,8 @@
     "db:push": "drizzle-kit push",
     "db:studio": "drizzle-kit studio",
     "create-admin": "tsx src/scripts/create-admin.ts",
-    "db:seed-permissions": "tsx src/db/seed-permissions.ts"
+    "db:seed-permissions": "tsx src/db/seed-permissions.ts",
+    "db:seed": "tsx src/scripts/seed.ts"
   },
   "dependencies": {
     "@hono/node-server": "^1.13.0",
