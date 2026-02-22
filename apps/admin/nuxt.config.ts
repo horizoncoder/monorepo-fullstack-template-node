@@ -12,6 +12,11 @@ export default defineNuxtConfig({
     langDir: 'locales',
     defaultLocale: 'en',
     strategy: 'no_prefix',
+    detectBrowserLanguage: {
+      useCookie: true,
+      cookieKey: 'i18n_lang',
+      fallbackLocale: 'en',
+    },
     bundle: { fullInstall: false },
   },
   veeValidate: {

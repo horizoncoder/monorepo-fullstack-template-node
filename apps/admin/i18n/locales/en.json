@@ -42,7 +42,7 @@
     "title": "Admins",
     "name": "Name",
     "email": "Email",
-    "role": "Type",
+    "role": "Role",
     "roles": "Roles",
     "permissions": "Permissions",
     "created": "Created"
