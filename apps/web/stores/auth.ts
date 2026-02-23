@@ -46,7 +46,8 @@ export const useAuthStore = defineStore('auth', () => {
     isLoading.value = true
     try {
       const headers = import.meta.server ? useRequestHeaders(['cookie']) : {}
-      const res = await $fetch<{ data: User }>(`${baseUrl}/api/client/auth/me`, {
+      const ssrBaseUrl = import.meta.server ? (config.apiInternalUrl || baseUrl) : baseUrl
+      const res = await $fetch<{ data: User }>(`${ssrBaseUrl}/api/client/auth/me`, {
         credentials: 'include',
         headers,
       })

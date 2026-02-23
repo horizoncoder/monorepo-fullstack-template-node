@@ -21,7 +21,10 @@ export default defineNuxtConfig({
   veeValidate: {
     autoImports: true,
   },
-  runtimeConfig: { public: { apiBaseUrl: process.env.NUXT_PUBLIC_API_BASE_URL || 'http://localhost:3001' } },
+  runtimeConfig: {
+    apiInternalUrl: process.env.API_INTERNAL_URL || '',
+    public: { apiBaseUrl: process.env.NUXT_PUBLIC_API_BASE_URL || 'http://localhost:3001' },
+  },
   devtools: { enabled: true },
   compatibilityDate: '2025-01-01',
 })

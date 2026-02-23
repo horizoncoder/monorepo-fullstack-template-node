@@ -44,7 +44,8 @@ export const useAdminAuthStore = defineStore('adminAuth', () => {
     isLoading.value = true
     try {
       const headers = import.meta.server ? useRequestHeaders(['cookie']) : {}
-      const res = await $fetch<{ data: Admin }>(`${baseUrl}/api/admin/auth/me`, {
+      const ssrBaseUrl = import.meta.server ? (config.apiInternalUrl || baseUrl) : baseUrl
+      const res = await $fetch<{ data: Admin }>(`${ssrBaseUrl}/api/admin/auth/me`, {
         credentials: 'include',
         headers,
       })

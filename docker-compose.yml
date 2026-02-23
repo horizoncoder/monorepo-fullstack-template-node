@@ -37,6 +37,7 @@ services:
       - api
     environment:
       NUXT_PUBLIC_API_BASE_URL: https://api.develop
+      API_INTERNAL_URL: http://api:3001
     expose:
       - "3000"
 
@@ -49,6 +50,7 @@ services:
     environment:
       PORT: 3002
       NUXT_PUBLIC_API_BASE_URL: https://api.develop
+      API_INTERNAL_URL: http://api:3001
     expose:
       - "3002"
 
