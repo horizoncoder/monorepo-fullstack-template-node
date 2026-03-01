@@ -23,7 +23,11 @@ export default defineNuxtConfig({
   },
   runtimeConfig: {
     apiInternalUrl: '', // overridden at runtime by NUXT_API_INTERNAL_URL
-    public: { apiBaseUrl: '' }, // overridden by NUXT_PUBLIC_API_BASE_URL for local dev
+    public: {
+      apiBaseUrl: '',
+      googleClientId: '',
+      telegramBotUsername: '',
+    },
   },
   devtools: { enabled: true },
   compatibilityDate: '2025-01-01',

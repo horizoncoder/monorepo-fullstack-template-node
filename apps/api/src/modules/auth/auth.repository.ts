@@ -55,6 +55,10 @@ export const authRepository = {
     return prisma.user.findUnique({ where: { id } })
   },
 
+  async findUserByProviderAndId(provider: string, providerId: string) {
+    return prisma.user.findFirst({ where: { provider, providerId } })
+  },
+
   async createSession(data: { adminId?: string; userId?: string; expiresAt: Date }) {
     return prisma.session.create({
       data: {
@@ -71,5 +75,28 @@ export const authRepository = {
 
   async deleteSession(id: string) {
     await prisma.session.delete({ where: { id } }).catch(() => {})
+  },
+
+  async createPasswordResetToken(userId: string, token: string, expiresAt: Date) {
+    return prisma.passwordResetToken.create({
+      data: { userId, token, expiresAt },
+    })
+  },
+
+  async findValidResetToken(token: string) {
+    return prisma.passwordResetToken.findFirst({
+      where: {
+        token,
+        used: false,
+        expiresAt: { gt: new Date() },
+      },
+    })
+  },
+
+  async markTokenUsed(id: string) {
+    return prisma.passwordResetToken.update({
+      where: { id },
+      data: { used: true },
+    })
   },
 }

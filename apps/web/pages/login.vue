@@ -7,7 +7,10 @@ definePageMeta({ layout: 'auth' })
 
 const { t } = useI18n()
 const authStore = useAuthStore()
+const config = useRuntimeConfig()
 useHead({ title: t('auth.login') })
+
+const hasOAuthProviders = computed(() => !!config.public.googleClientId || !!config.public.telegramBotUsername)
 
 const validationSchema = toTypedSchema(loginSchema)
 const { handleSubmit, errors, isSubmitting } = useForm({ validationSchema })
@@ -23,6 +26,26 @@ const onSubmit = handleSubmit(async (values) => {
     toast.error(e?.data?.message || t('auth.invalidCredentials'))
   }
 })
+
+async function handleGoogleLogin(credential: string) {
+  try {
+    await authStore.googleLogin(credential)
+    toast.success(t('auth.loginSuccess'))
+    navigateTo('/')
+  } catch (e: any) {
+    toast.error(e?.data?.message || t('auth.oauthError'))
+  }
+}
+
+async function handleTelegramLogin(data: Record<string, any>) {
+  try {
+    await authStore.telegramLogin(data)
+    toast.success(t('auth.loginSuccess'))
+    navigateTo('/')
+  } catch (e: any) {
+    toast.error(e?.data?.message || t('auth.oauthError'))
+  }
+}
 </script>
 
 <template>
@@ -51,7 +74,10 @@ const onSubmit = handleSubmit(async (values) => {
           </div>
 
           <div class="space-y-2">
-            <label class="text-sm font-medium text-foreground">{{ t('auth.password') }}</label>
+            <div class="flex items-center justify-between">
+              <label class="text-sm font-medium text-foreground">{{ t('auth.password') }}</label>
+              <NuxtLink to="/forgot-password" class="text-xs text-primary hover:text-primary/80">{{ t('auth.forgotPasswordLink') }}</NuxtLink>
+            </div>
             <Input
               v-model="password"
               type="password"
@@ -66,6 +92,19 @@ const onSubmit = handleSubmit(async (values) => {
             {{ isSubmitting ? t('common.loading') : t('auth.signIn') }}
           </Button>
         </form>
+
+        <!-- OAuth Section -->
+        <template v-if="hasOAuthProviders">
+          <div class="relative my-6">
+            <div class="absolute inset-0 flex items-center"><div class="w-full border-t border-border"></div></div>
+            <div class="relative flex justify-center text-xs"><span class="bg-card px-2 text-muted-foreground">{{ t('auth.orContinueWith') }}</span></div>
+          </div>
+
+          <div class="space-y-3">
+            <GoogleSignInButton @success="handleGoogleLogin" />
+            <TelegramSignInButton @success="handleTelegramLogin" />
+          </div>
+        </template>
 
         <p class="mt-4 text-center text-sm text-muted-foreground">
           {{ t('auth.noAccount') }}

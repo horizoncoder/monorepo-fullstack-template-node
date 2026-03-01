@@ -30,3 +30,36 @@ export const sessionSchema = z.object({
   expiresAt: z.string().datetime(),
   createdAt: z.string().datetime(),
 })
+
+export const updateProfileSchema = z.object({
+  name: z.string().min(2).max(255),
+  email: z.string().email(),
+})
+
+export const changePasswordSchema = z.object({
+  currentPassword: z.string().min(6),
+  newPassword: z.string().min(6),
+})
+
+export const forgotPasswordSchema = z.object({
+  email: z.string().email(),
+})
+
+export const resetPasswordSchema = z.object({
+  token: z.string(),
+  newPassword: z.string().min(6),
+})
+
+export const googleAuthSchema = z.object({
+  credential: z.string().min(1),
+})
+
+export const telegramAuthSchema = z.object({
+  id: z.number(),
+  first_name: z.string(),
+  last_name: z.string().optional(),
+  username: z.string().optional(),
+  photo_url: z.string().optional(),
+  auth_date: z.number(),
+  hash: z.string(),
+})

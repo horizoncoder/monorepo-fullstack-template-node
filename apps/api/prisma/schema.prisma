@@ -9,14 +9,18 @@ datasource db {
 
 model User {
   id           String    @id @default(uuid()) @db.Uuid
-  email        String    @unique @db.VarChar(255)
+  email        String?   @unique @db.VarChar(255)
   name         String    @db.VarChar(255)
-  passwordHash String    @map("password_hash") @db.VarChar(255)
+  passwordHash String?   @map("password_hash") @db.VarChar(255)
+  provider     String    @default("local") @db.VarChar(50)
+  providerId   String?   @map("provider_id") @db.VarChar(255)
   createdAt    DateTime  @default(now()) @map("created_at") @db.Timestamptz
   updatedAt    DateTime  @default(now()) @updatedAt @map("updated_at") @db.Timestamptz
 
-  sessions Session[]
+  sessions            Session[]
+  passwordResetTokens PasswordResetToken[]
 
+  @@unique([provider, providerId])
   @@map("users")
 }
 
@@ -81,6 +85,19 @@ model RolePermission {
 
   @@id([roleId, permissionId])
   @@map("role_permissions")
+}
+
+model PasswordResetToken {
+  id        String   @id @default(uuid()) @db.Uuid
+  token     String   @unique @db.VarChar(255)
+  userId    String   @map("user_id") @db.Uuid
+  expiresAt DateTime @map("expires_at") @db.Timestamptz
+  used      Boolean  @default(false)
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("password_reset_tokens")
 }
 
 model AdminRole {

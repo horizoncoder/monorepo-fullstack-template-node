@@ -1,6 +1,6 @@
 import { Hono } from 'hono'
 import { zValidator } from '@hono/zod-validator'
-import { loginSchema, registerSchema } from '@repo/shared'
+import { loginSchema, registerSchema, forgotPasswordSchema, resetPasswordSchema, googleAuthSchema, telegramAuthSchema } from '@repo/shared'
 import { getCookie, setCookie, deleteCookie } from 'hono/cookie'
 import { authService } from './auth.service'
 
@@ -70,9 +70,31 @@ export const clientAuthRoutes = new Hono()
     }
     return c.json({ message: 'Logged out' })
   })
+  .post('/forgot-password', zValidator('json', forgotPasswordSchema), async (c) => {
+    const { email } = c.req.valid('json')
+    await authService.requestPasswordReset(email)
+    return c.json({ message: 'If this email is registered, a reset link has been sent' })
+  })
+  .post('/reset-password', zValidator('json', resetPasswordSchema), async (c) => {
+    const { token, newPassword } = c.req.valid('json')
+    await authService.resetPassword(token, newPassword)
+    return c.json({ message: 'Password has been reset successfully' })
+  })
+  .post('/google', zValidator('json', googleAuthSchema), async (c) => {
+    const { credential } = c.req.valid('json')
+    const { session, user } = await authService.googleAuth(credential)
+    setCookie(c, 'user_session', session.id, COOKIE_OPTIONS)
+    return c.json({ data: { id: user.id, email: user.email, name: user.name } })
+  })
+  .post('/telegram', zValidator('json', telegramAuthSchema), async (c) => {
+    const data = c.req.valid('json')
+    const { session, user } = await authService.telegramAuth(data)
+    setCookie(c, 'user_session', session.id, COOKIE_OPTIONS)
+    return c.json({ data: { id: user.id, email: user.email, name: user.name } })
+  })
 
 export const clientAuthProtectedRoutes = new Hono()
   .get('/me', (c) => {
     const user = c.get('user')
-    return c.json({ data: { id: user.id, email: user.email, name: user.name } })
+    return c.json({ data: { id: user.id, email: user.email, name: user.name, provider: user.provider } })
   })

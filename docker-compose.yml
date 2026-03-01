@@ -25,6 +25,12 @@ services:
       DATABASE_URL: postgres://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD:-postgres}@postgres:5432/${POSTGRES_DB:-saas}
       COOKIE_SECRET: ${COOKIE_SECRET:-super-secret-cookie-key-change-in-production}
       CORS_ORIGINS: ${CORS_ORIGINS:-https://develop,https://api.develop}
+      EMAIL_PROVIDER: ${EMAIL_PROVIDER:-maileroo}
+      EMAIL_FROM: ${EMAIL_FROM:-noreply@65a2773e14e6e02e.maileroo.org}
+      MAILEROO_API_KEY: ${MAILEROO_API_KEY:-}
+      WEB_URL: ${WEB_URL:-https://develop}
+      GOOGLE_CLIENT_ID: ${GOOGLE_CLIENT_ID:-}
+      TELEGRAM_BOT_TOKEN: ${TELEGRAM_BOT_TOKEN:-}
     expose:
       - "3001"
 
@@ -36,6 +42,8 @@ services:
       - api
     environment:
       NUXT_API_INTERNAL_URL: http://api:3001
+      NUXT_PUBLIC_GOOGLE_CLIENT_ID: ${GOOGLE_CLIENT_ID:-}
+      NUXT_PUBLIC_TELEGRAM_BOT_USERNAME: ${TELEGRAM_BOT_USERNAME:-}
     expose:
       - "3000"
 

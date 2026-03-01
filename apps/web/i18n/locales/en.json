@@ -1,11 +1,13 @@
 {
   "common": {
     "appName": "SaaS App",
-    "nav": { "dashboard": "Dashboard" },
+    "nav": { "dashboard": "Dashboard", "profile": "Profile" },
     "theme": "Theme",
     "loading": "Loading...",
     "error": "Error",
-    "logout": "Sign out"
+    "logout": "Sign out",
+    "collapseSidebar": "Collapse sidebar",
+    "expandSidebar": "Expand sidebar"
   },
   "auth": {
     "login": "Sign In",
@@ -27,7 +29,33 @@
     "registerSuccess": "Account created successfully!",
     "registerError": "Failed to create account",
     "alreadyHaveAccount": "Already have an account?",
-    "noAccount": "Don't have an account?"
+    "noAccount": "Don't have an account?",
+    "forgotPassword": "Forgot password",
+    "forgotPasswordSubtitle": "Enter your email and we'll send you a reset link",
+    "forgotPasswordLink": "Forgot password?",
+    "sendResetLink": "Send reset link",
+    "checkEmail": "Check your email",
+    "checkEmailSubtitle": "If this email is registered, you'll receive a password reset link shortly.",
+    "backToLogin": "Back to sign in",
+    "resetPassword": "Reset password",
+    "resetPasswordSubtitle": "Enter your new password below",
+    "resetSuccess": "Password has been reset. You can now sign in.",
+    "invalidResetLink": "Invalid or expired reset link. Please request a new one.",
+    "orContinueWith": "Or continue with",
+    "oauthError": "Authentication failed. Please try again."
+  },
+  "profile": {
+    "title": "Profile",
+    "personalInfo": "Personal Information",
+    "save": "Save changes",
+    "updateSuccess": "Profile updated successfully",
+    "changePassword": "Change Password",
+    "currentPassword": "Current password",
+    "newPassword": "New password",
+    "confirmPassword": "Confirm new password",
+    "updatePassword": "Update password",
+    "passwordChanged": "Password changed successfully",
+    "passwordMismatch": "Passwords do not match"
   },
   "dashboard": {
     "title": "Dashboard",

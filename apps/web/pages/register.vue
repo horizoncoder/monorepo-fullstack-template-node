@@ -7,7 +7,10 @@ definePageMeta({ layout: 'auth' })
 
 const { t } = useI18n()
 const authStore = useAuthStore()
+const config = useRuntimeConfig()
 useHead({ title: t('auth.register') })
+
+const hasOAuthProviders = computed(() => !!config.public.googleClientId || !!config.public.telegramBotUsername)
 
 const validationSchema = toTypedSchema(registerSchema)
 const { handleSubmit, errors, isSubmitting } = useForm({ validationSchema })
@@ -24,6 +27,26 @@ const onSubmit = handleSubmit(async (values) => {
     toast.error(e?.data?.message || t('auth.registerError'))
   }
 })
+
+async function handleGoogleLogin(credential: string) {
+  try {
+    await authStore.googleLogin(credential)
+    toast.success(t('auth.loginSuccess'))
+    navigateTo('/')
+  } catch (e: any) {
+    toast.error(e?.data?.message || t('auth.oauthError'))
+  }
+}
+
+async function handleTelegramLogin(data: Record<string, any>) {
+  try {
+    await authStore.telegramLogin(data)
+    toast.success(t('auth.loginSuccess'))
+    navigateTo('/')
+  } catch (e: any) {
+    toast.error(e?.data?.message || t('auth.oauthError'))
+  }
+}
 </script>
 
 <template>
@@ -79,6 +102,19 @@ const onSubmit = handleSubmit(async (values) => {
             {{ isSubmitting ? t('common.loading') : t('auth.signUp') }}
           </Button>
         </form>
+
+        <!-- OAuth Section -->
+        <template v-if="hasOAuthProviders">
+          <div class="relative my-6">
+            <div class="absolute inset-0 flex items-center"><div class="w-full border-t border-border"></div></div>
+            <div class="relative flex justify-center text-xs"><span class="bg-card px-2 text-muted-foreground">{{ t('auth.orContinueWith') }}</span></div>
+          </div>
+
+          <div class="space-y-3">
+            <GoogleSignInButton @success="handleGoogleLogin" />
+            <TelegramSignInButton @success="handleTelegramLogin" />
+          </div>
+        </template>
 
         <p class="mt-4 text-center text-sm text-muted-foreground">
           {{ t('auth.alreadyHaveAccount') }}

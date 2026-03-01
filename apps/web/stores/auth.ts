@@ -2,8 +2,9 @@ import { defineStore } from 'pinia'
 
 interface User {
   id: string
-  email: string
+  email: string | null
   name: string
+  provider?: string
 }
 
 export const useAuthStore = defineStore('auth', () => {
@@ -61,5 +62,25 @@ export const useAuthStore = defineStore('auth', () => {
     }
   }
 
-  return { user, isLoading, isAuthenticated, register, login, logout, fetchMe }
+  async function googleLogin(credential: string) {
+    const res = await $fetch<{ data: User }>(`${baseUrl}/api/client/auth/google`, {
+      method: 'POST',
+      body: { credential },
+      credentials: 'include',
+    })
+    user.value = res.data
+    return res.data
+  }
+
+  async function telegramLogin(data: Record<string, any>) {
+    const res = await $fetch<{ data: User }>(`${baseUrl}/api/client/auth/telegram`, {
+      method: 'POST',
+      body: data,
+      credentials: 'include',
+    })
+    user.value = res.data
+    return res.data
+  }
+
+  return { user, isLoading, isAuthenticated, register, login, logout, fetchMe, googleLogin, telegramLogin }
 })

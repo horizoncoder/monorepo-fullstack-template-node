@@ -1,11 +1,13 @@
 {
   "common": {
     "appName": "SaaS Додаток",
-    "nav": { "dashboard": "Дашборд" },
+    "nav": { "dashboard": "Дашборд", "profile": "Профіль" },
     "theme": "Тема",
     "loading": "Завантаження...",
     "error": "Помилка",
-    "logout": "Вийти"
+    "logout": "Вийти",
+    "collapseSidebar": "Згорнути меню",
+    "expandSidebar": "Розгорнути меню"
   },
   "auth": {
     "login": "Вхід",
@@ -27,7 +29,33 @@
     "registerSuccess": "Акаунт створено!",
     "registerError": "Помилка створення акаунту",
     "alreadyHaveAccount": "Вже маєте акаунт?",
-    "noAccount": "Немає акаунту?"
+    "noAccount": "Немає акаунту?",
+    "forgotPassword": "Забули пароль",
+    "forgotPasswordSubtitle": "Введіть ваш email і ми надішлемо посилання для скидання",
+    "forgotPasswordLink": "Забули пароль?",
+    "sendResetLink": "Надіслати посилання",
+    "checkEmail": "Перевірте вашу пошту",
+    "checkEmailSubtitle": "Якщо цей email зареєстровано, ви отримаєте посилання для скидання пароля.",
+    "backToLogin": "Повернутися до входу",
+    "resetPassword": "Скидання пароля",
+    "resetPasswordSubtitle": "Введіть новий пароль нижче",
+    "resetSuccess": "Пароль скинуто. Тепер ви можете увійти.",
+    "invalidResetLink": "Недійсне або прострочене посилання. Запросіть нове.",
+    "orContinueWith": "Або продовжити через",
+    "oauthError": "Помилка автентифікації. Спробуйте ще раз."
+  },
+  "profile": {
+    "title": "Профіль",
+    "personalInfo": "Особиста інформація",
+    "save": "Зберегти зміни",
+    "updateSuccess": "Профіль оновлено",
+    "changePassword": "Змінити пароль",
+    "currentPassword": "Поточний пароль",
+    "newPassword": "Новий пароль",
+    "confirmPassword": "Підтвердіть новий пароль",
+    "updatePassword": "Оновити пароль",
+    "passwordChanged": "Пароль змінено",
+    "passwordMismatch": "Паролі не збігаються"
   },
   "dashboard": {
     "title": "Дашборд",

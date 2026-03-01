@@ -1,5 +1,7 @@
 import { Hono } from 'hono'
-import { usersService } from '../users/users.service'
+import { zValidator } from '@hono/zod-validator'
+import { updateProfileSchema, changePasswordSchema } from '@repo/shared'
+import { profileService } from './profile.service'
 
 export const clientProfileRoutes = new Hono()
   .get('/', (c) => {
@@ -11,9 +13,15 @@ export const clientProfileRoutes = new Hono()
       },
     })
   })
-  .patch('/', async (c) => {
+  .patch('/', zValidator('json', updateProfileSchema), async (c) => {
     const user = c.get('user')
-    const data = await c.req.json()
-    const updated = await usersService.update(user.id, data)
+    const data = c.req.valid('json')
+    const updated = await profileService.updateProfile(user.id, data)
     return c.json({ data: updated })
+  })
+  .post('/password', zValidator('json', changePasswordSchema), async (c) => {
+    const user = c.get('user')
+    const { currentPassword, newPassword } = c.req.valid('json')
+    await profileService.changePassword(user.id, currentPassword, newPassword)
+    return c.json({ message: 'Password updated successfully' })
   })

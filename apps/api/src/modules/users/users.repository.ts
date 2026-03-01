@@ -21,7 +21,13 @@ export const usersRepository = {
     return prisma.user.findUnique({ where: { email } })
   },
 
-  async create(data: { email: string; name: string; passwordHash: string }) {
+  async create(data: {
+    email?: string | null
+    name: string
+    passwordHash?: string | null
+    provider?: string
+    providerId?: string | null
+  }) {
     return prisma.user.create({ data, select: selectPublic })
   },
 
