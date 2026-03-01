@@ -28,9 +28,9 @@ const columns: ColumnDef<User>[] = [
 <template>
   <div class="space-y-6">
     <div class="flex items-center justify-between">
-      <h1 class="text-3xl font-bold tracking-tight text-gray-900 dark:text-white">{{ t('users.title') }}</h1>
+      <h1 class="text-3xl font-bold tracking-tight text-foreground">{{ t('users.title') }}</h1>
     </div>
-    <Card class="border-gray-200 dark:border-gray-800">
+    <Card class="border-border">
       <CardContent class="p-0">
         <div v-if="isPending" class="p-6 text-muted-foreground">{{ t('common.loading') }}</div>
         <DataTable v-else :columns="columns" :data="users ?? []" />

@@ -29,47 +29,47 @@ const onSubmit = handleSubmit(async (values) => {
   <div class="w-full max-w-md">
     <!-- Logo & Header -->
     <div class="text-center mb-8">
-      <div class="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-gradient-to-br from-emerald-500 to-green-600 text-white text-xl font-bold mb-4 shadow-lg shadow-emerald-500/25">S</div>
-      <h1 class="text-2xl font-bold text-gray-900 dark:text-white">{{ t('auth.welcomeBack') }}</h1>
-      <p class="mt-2 text-sm text-gray-500 dark:text-gray-400">{{ t('auth.loginSubtitle') }}</p>
+      <div class="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-primary text-primary-foreground text-xl font-bold mb-4 shadow-lg shadow-primary/25">S</div>
+      <h1 class="text-2xl font-bold text-foreground">{{ t('auth.welcomeBack') }}</h1>
+      <p class="mt-2 text-sm text-muted-foreground">{{ t('auth.loginSubtitle') }}</p>
     </div>
 
     <!-- Login Card -->
-    <Card class="shadow-xl shadow-gray-200/50 dark:shadow-none border-gray-200 dark:border-gray-800">
+    <Card class="shadow-xl border-border">
       <CardContent class="p-6">
         <form @submit.prevent="onSubmit" class="space-y-4">
           <div class="space-y-2">
-            <label class="text-sm font-medium text-gray-700 dark:text-gray-300">{{ t('auth.email') }}</label>
+            <label class="text-sm font-medium text-foreground">{{ t('auth.email') }}</label>
             <Input
               v-model="email"
               type="email"
               :placeholder="t('auth.emailPlaceholder')"
               class="h-11"
-              :class="{ 'border-red-500': errors.email }"
+              :class="{ 'border-destructive': errors.email }"
             />
-            <p v-if="errors.email" class="text-xs text-red-500">{{ errors.email }}</p>
+            <p v-if="errors.email" class="text-xs text-destructive">{{ errors.email }}</p>
           </div>
 
           <div class="space-y-2">
-            <label class="text-sm font-medium text-gray-700 dark:text-gray-300">{{ t('auth.password') }}</label>
+            <label class="text-sm font-medium text-foreground">{{ t('auth.password') }}</label>
             <Input
               v-model="password"
               type="password"
               :placeholder="t('auth.passwordPlaceholder')"
               class="h-11"
-              :class="{ 'border-red-500': errors.password }"
+              :class="{ 'border-destructive': errors.password }"
             />
-            <p v-if="errors.password" class="text-xs text-red-500">{{ errors.password }}</p>
+            <p v-if="errors.password" class="text-xs text-destructive">{{ errors.password }}</p>
           </div>
 
-          <Button type="submit" class="w-full h-11 bg-gradient-to-r from-emerald-500 to-green-600 hover:from-emerald-600 hover:to-green-700 text-white shadow-lg shadow-emerald-500/25" :disabled="isSubmitting">
+          <Button type="submit" class="w-full h-11 bg-primary hover:bg-primary/90 text-primary-foreground shadow-lg shadow-primary/25" :disabled="isSubmitting">
             {{ isSubmitting ? t('common.loading') : t('auth.signIn') }}
           </Button>
         </form>
 
-        <p class="mt-4 text-center text-sm text-gray-500 dark:text-gray-400">
+        <p class="mt-4 text-center text-sm text-muted-foreground">
           {{ t('auth.noAccount') }}
-          <NuxtLink to="/register" class="font-medium text-emerald-600 hover:text-emerald-500 dark:text-emerald-400">{{ t('auth.signUp') }}</NuxtLink>
+          <NuxtLink to="/register" class="font-medium text-primary hover:text-primary/80">{{ t('auth.signUp') }}</NuxtLink>
         </p>
       </CardContent>
     </Card>

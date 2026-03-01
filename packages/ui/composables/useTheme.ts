@@ -5,15 +5,17 @@ export interface ThemePreset {
   label: string
   primary: string
   primaryForeground: string
+  darkPrimary: string
+  darkPrimaryForeground: string
 }
 
 export const themePresets: ThemePreset[] = [
-  { name: 'zinc', label: 'Zinc', primary: '240 5.9% 10%', primaryForeground: '0 0% 98%' },
-  { name: 'blue', label: 'Blue', primary: '221.2 83.2% 53.3%', primaryForeground: '210 40% 98%' },
-  { name: 'green', label: 'Green', primary: '142.1 76.2% 36.3%', primaryForeground: '355.7 100% 97.3%' },
-  { name: 'orange', label: 'Orange', primary: '24.6 95% 53.1%', primaryForeground: '60 9.1% 97.8%' },
-  { name: 'rose', label: 'Rose', primary: '346.8 77.2% 49.8%', primaryForeground: '355.7 100% 97.3%' },
-  { name: 'violet', label: 'Violet', primary: '263.4 70% 50.4%', primaryForeground: '210 20% 98%' },
+  { name: 'zinc', label: 'Zinc', primary: '240 5.9% 10%', primaryForeground: '0 0% 98%', darkPrimary: '0 0% 98%', darkPrimaryForeground: '240 5.9% 10%' },
+  { name: 'blue', label: 'Blue', primary: '221.2 83.2% 53.3%', primaryForeground: '210 40% 98%', darkPrimary: '217.2 91.2% 59.8%', darkPrimaryForeground: '222.2 47.4% 11.2%' },
+  { name: 'green', label: 'Green', primary: '142.1 76.2% 36.3%', primaryForeground: '355.7 100% 97.3%', darkPrimary: '142.1 70.6% 45.3%', darkPrimaryForeground: '144.9 80.4% 10%' },
+  { name: 'orange', label: 'Orange', primary: '24.6 95% 53.1%', primaryForeground: '60 9.1% 97.8%', darkPrimary: '20.5 90.2% 48.2%', darkPrimaryForeground: '60 9.1% 97.8%' },
+  { name: 'rose', label: 'Rose', primary: '346.8 77.2% 49.8%', primaryForeground: '355.7 100% 97.3%', darkPrimary: '346.8 77.2% 49.8%', darkPrimaryForeground: '355.7 100% 97.3%' },
+  { name: 'violet', label: 'Violet', primary: '263.4 70% 50.4%', primaryForeground: '210 20% 98%', darkPrimary: '263.4 70% 50.4%', darkPrimaryForeground: '210 20% 98%' },
 ]
 
 export const textColorPresets = [
@@ -59,28 +61,26 @@ export function useTheme() {
     if (typeof document === 'undefined') return
 
     const root = document.documentElement
+    const isDark = themeMode.value === 'dark'
 
     // Dark mode
-    if (themeMode.value === 'dark') {
-      root.classList.add('dark')
-    } else {
-      root.classList.remove('dark')
-    }
+    root.classList.toggle('dark', isDark)
 
-    // Accent color
+    // Accent color — use mode-appropriate values
     const preset = themePresets.find((p) => p.name === accentName.value)
     if (preset) {
-      root.style.setProperty('--primary', preset.primary)
-      root.style.setProperty('--primary-foreground', preset.primaryForeground)
-      root.style.setProperty('--ring', preset.primary)
+      root.style.setProperty('--primary', isDark ? preset.darkPrimary : preset.primary)
+      root.style.setProperty('--primary-foreground', isDark ? preset.darkPrimaryForeground : preset.primaryForeground)
+      root.style.setProperty('--ring', isDark ? preset.darkPrimary : preset.primary)
     }
 
-    // Text color
+    // Text color — update all foreground variables
     const textPreset = textColorPresets.find((p) => p.name === textColorName.value)
     if (textPreset) {
-      const fg = themeMode.value === 'dark' ? textPreset.darkForeground : textPreset.foreground
+      const fg = isDark ? textPreset.darkForeground : textPreset.foreground
       root.style.setProperty('--foreground', fg)
       root.style.setProperty('--card-foreground', fg)
+      root.style.setProperty('--popover-foreground', fg)
     }
 
     // Persist
