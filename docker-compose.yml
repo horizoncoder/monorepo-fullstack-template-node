@@ -24,7 +24,6 @@ services:
       PORT: 3001
       DATABASE_URL: postgres://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD:-postgres}@postgres:5432/${POSTGRES_DB:-saas}
       COOKIE_SECRET: ${COOKIE_SECRET:-super-secret-cookie-key-change-in-production}
-      COOKIE_DOMAIN: ${COOKIE_DOMAIN:-.develop}
       CORS_ORIGINS: ${CORS_ORIGINS:-https://develop,https://api.develop}
     expose:
       - "3001"
@@ -36,8 +35,7 @@ services:
     depends_on:
       - api
     environment:
-      NUXT_PUBLIC_API_BASE_URL: https://api.develop
-      API_INTERNAL_URL: http://api:3001
+      NUXT_API_INTERNAL_URL: http://api:3001
     expose:
       - "3000"
 
@@ -49,8 +47,8 @@ services:
       - api
     environment:
       PORT: 3002
-      NUXT_PUBLIC_API_BASE_URL: https://api.develop
-      API_INTERNAL_URL: http://api:3001
+      NUXT_PUBLIC_API_BASE_URL: https://develop
+      NUXT_API_INTERNAL_URL: http://api:3001
     expose:
       - "3002"
 

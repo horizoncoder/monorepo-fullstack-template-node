@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 
-const { t, locale, locales } = useI18n()
+const { t, locale, locales, setLocale } = useI18n()
 const authStore = useAuthStore()
 const showCustomizer = ref(false)
 const showUserMenu = ref(false)
@@ -51,7 +51,7 @@ async function handleLogout() {
       <!-- Bottom section -->
       <div class="p-4 border-t border-gray-200 dark:border-gray-800 space-y-3">
         <div class="flex gap-1">
-          <Button v-for="loc in availableLocales" :key="loc.code" variant="ghost" size="sm" class="text-xs" @click="locale = loc.code">{{ loc.name }}</Button>
+          <Button v-for="loc in availableLocales" :key="loc.code" variant="ghost" size="sm" class="text-xs" @click="setLocale(loc.code)">{{ loc.name }}</Button>
           <Button variant="ghost" size="sm" class="text-xs" @click="showCustomizer = !showCustomizer">{{ t('common.theme') }}</Button>
         </div>
         <div v-if="showCustomizer" class="rounded-lg border bg-card p-3"><ThemeCustomizer /></div>

@@ -22,8 +22,8 @@ export default defineNuxtConfig({
     autoImports: true,
   },
   runtimeConfig: {
-    apiInternalUrl: process.env.API_INTERNAL_URL || '',
-    public: { apiBaseUrl: process.env.NUXT_PUBLIC_API_BASE_URL || 'http://localhost:3001' },
+    apiInternalUrl: '', // overridden at runtime by NUXT_API_INTERNAL_URL
+    public: { apiBaseUrl: '' }, // overridden by NUXT_PUBLIC_API_BASE_URL for local dev
   },
   devtools: { enabled: true },
   compatibilityDate: '2025-01-01',

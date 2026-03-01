@@ -4,18 +4,18 @@ import { loginSchema, registerSchema } from '@repo/shared'
 import { getCookie, setCookie, deleteCookie } from 'hono/cookie'
 import { authService } from './auth.service'
 
-const cookieDomain = process.env.COOKIE_DOMAIN || '.develop'
+const cookieDomain = process.env.COOKIE_DOMAIN || undefined
 
 const COOKIE_OPTIONS = {
   httpOnly: true,
-  secure: true,
+  secure: !!cookieDomain,
   sameSite: 'lax' as const,
   path: '/',
   maxAge: 7 * 24 * 60 * 60,
-  domain: cookieDomain,
+  ...(cookieDomain ? { domain: cookieDomain } : {}),
 }
 
-const DELETE_OPTS = { path: '/', domain: cookieDomain }
+const DELETE_OPTS = { path: '/', ...(cookieDomain ? { domain: cookieDomain } : {}) }
 
 export const adminAuthRoutes = new Hono()
   .post('/login', zValidator('json', loginSchema), async (c) => {
